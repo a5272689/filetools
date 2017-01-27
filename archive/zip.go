@@ -8,6 +8,7 @@ import (
 	"errors"
 	"filetools/filetools"
 	"path/filepath"
+	"fmt"
 )
 
 func Unzip(zippath,outpath string,cover bool ) error {
@@ -22,6 +23,7 @@ func Unzip(zippath,outpath string,cover bool ) error {
 	}
 	for _, f := range r.File {
 		new_path := path.Join(outpath, f.Name)
+		fmt.Println(new_path)
 		_,new_path_err:=os.Stat(new_path)
 		if f.Mode().IsDir() {
 			if new_path_err!=nil{
