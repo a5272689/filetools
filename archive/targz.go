@@ -82,13 +82,7 @@ func Targz(srcpath,targzpath string) error {
 		rootdir,_=filepath.Split(srcpath)
 	}
 	files_edirs:=empty_dirs
-	tmp_map:=make(map[string]bool)
 	for _,file_path:=range files{
-		dir,_:=path.Split(file_path)
-		if tmp_map[dir]!=nil{
-			files_edirs=append(files_edirs,dir)
-			tmp_map[dir]=true
-		}
 		files_edirs=append(files_edirs,file_path)
 	}
 	targzfile,err:=os.Create(targzpath)

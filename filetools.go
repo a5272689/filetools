@@ -19,7 +19,7 @@ func main()  {
 			if err!=nil{
 				log.Fatal(err)
 			}else {
-				fmt.Println("文件列表：\n",files,"\n空目录列表：\n",empty_dirs)
+				fmt.Println("文件列表：\n",files,"\n目录列表：\n",empty_dirs)
 			}
 		case "zip":
 			if len(args)==2{

@@ -22,9 +22,7 @@ func WalkDir(root_dir string)(files[]string,empty_dirs[]string,err error){
 						files=append(files,path.Join(dir,FI.Name()))
 					}
 				}
-				if len(FI_list)==0{
-					empty_dirs=append(empty_dirs,dir)
-				}
+				empty_dirs=append(empty_dirs,dir)
 			}
 			dirs=newdirs
 		}else {
