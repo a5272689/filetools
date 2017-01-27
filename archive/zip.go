@@ -8,7 +8,6 @@ import (
 	"errors"
 	"filetools/filetools"
 	"path/filepath"
-	"fmt"
 )
 
 func Unzip(zippath,outpath string,cover bool ) error {

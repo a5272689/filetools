@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"compress/gzip"
 	"archive/tar"
-	"fmt"
 )
 
 func Untargz(targzpath,outpath string,cover bool ) error {
