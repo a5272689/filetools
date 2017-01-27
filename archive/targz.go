@@ -30,7 +30,6 @@ func Untargz(targzpath,outpath string,cover bool ) error {
 	tr:=tar.NewReader(r)
 	for f, er := tr.Next(); er != io.EOF; f, er = tr.Next(){
 		new_path := path.Join(outpath,f.Name )
-		fmt.Println(new_path)
 		_,new_path_err:=os.Stat(new_path)
 		fi:=f.FileInfo()
 		if fi.Mode().IsDir() {
