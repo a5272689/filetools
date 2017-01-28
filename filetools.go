@@ -15,11 +15,17 @@ func main()  {
 	if len(args)>1{
 		switch args[0] {
 		case "walk":
-			files,empty_dirs,err:=filetools.WalkDir(args[1])
+			dirs,err:=filetools.WalkDirInfo(args[1])
 			if err!=nil{
 				log.Fatal(err)
 			}else {
-				fmt.Println("文件列表：\n",files,"\n目录列表：\n",empty_dirs)
+				for _,dir:=range dirs{
+					fmt.Println("目录：",dir.Name)
+					for _,fileinfo:=range dir.Files{
+						fmt.Println("文件：",path.Join(dir.Name,fileinfo.Name()))
+					}
+				}
+
 			}
 		case "zip":
 			if len(args)==2{

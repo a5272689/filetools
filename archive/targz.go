@@ -5,7 +5,6 @@ import (
 	"io"
 	"path"
 	"errors"
-	"filetools/filetools"
 	"path/filepath"
 	"compress/gzip"
 	"archive/tar"
@@ -65,23 +64,9 @@ func Untargz(targzpath,outpath string,cover bool ) error {
 }
 
 func Targz(srcpath,targzpath string) error {
-	fileinfo,err:= os.Stat(srcpath)
+	files_edirs,rootdir,err:=getdirinfos(srcpath)
 	if err!=nil{
 		return err
-	}
-	var files,empty_dirs[]string
-	var rootdir string
-	if fileinfo.IsDir(){
-		files,empty_dirs,err=filetools.WalkDir(srcpath)
-		rootdir=srcpath
-	}else {
-		err=nil
-		files=[]string{srcpath}
-		rootdir,_=filepath.Split(srcpath)
-	}
-	files_edirs:=empty_dirs
-	for _,file_path:=range files{
-		files_edirs=append(files_edirs,file_path)
 	}
 	targzfile,err:=os.Create(targzpath)
 	if err!=nil{
@@ -95,12 +80,9 @@ func Targz(srcpath,targzpath string) error {
 	for _,filename:=range files_edirs{
 		relpath,err:=filepath.Rel(rootdir,filename)
 		if err!=nil{
-			return nil
-		}
-		file_ob,err:=os.Open(filename)
-		if err!=nil{
 			return err
 		}
+		file_ob,err:=os.Open(filename)
 		if err!=nil{
 			return err
 		}
