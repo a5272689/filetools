@@ -17,13 +17,16 @@ func getdirinfos(srcpath string) (files_edirs[]string,rootdir string,err error) 
 		if err!=nil{
 			return files_edirs,rootdir,err
 		}
+		rootdir=path.Clean(srcpath)
 		for _,dir:=range dirinfos{
-			files_edirs=append(files_edirs,dir.Name)
+			if dir.Name!=rootdir{
+				files_edirs=append(files_edirs,dir.Name)
+			}
 			for _,fileinfo:=range dir.Files{
 				files_edirs=append(files_edirs,path.Join(dir.Name,fileinfo.Name()))
 			}
 		}
-		rootdir=srcpath
+
 	}else {
 		err=nil
 		files_edirs=append(files_edirs,srcpath)
