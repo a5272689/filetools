@@ -5,6 +5,9 @@ import (
 	"path"
 	"os"
 	"container/list"
+	"path/filepath"
+	"io"
+	"errors"
 )
 
 type Dir struct {
@@ -53,4 +56,58 @@ func WalkDirInfo(dir string) (dirInfo []Dir, err error)  {
 		dirInfo=append(dirInfo,e.Value.(Dir))
 	}
 	return dirInfo,nil
+}
+
+func CopyDir(src,dst string) error {
+	src=filepath.Clean(src)
+	dst=filepath.Clean(dst)
+	_,filename:=path.Split(src)
+	srcinfo,err:=os.Stat(src)
+	if err!=nil{
+		return err
+	}
+	dst=path.Join(dst,filename)
+	os.Mkdir(dst,srcinfo.Mode())
+	dirinfo,err:=WalkDirInfo(src)
+	if err!=nil{
+		return err
+	}
+	for _,dirname:=range dirinfo{
+		dirinfo,err:=os.Stat(dirname.Name)
+		if err!=nil{
+			return nil
+		}
+		relpath,_:=filepath.Rel(src,dirname.Name)
+		newdir:=path.Join(dst,relpath)
+		os.Mkdir(newdir,dirinfo.Mode())
+		for _,fileinfo:=range dirname.Files{
+			newfilepath:=path.Join(newdir,fileinfo.Name())
+			_,err=os.Stat(newfilepath)
+			if err==nil{
+				return errors.New("文件："+newfilepath+" 已经存在！！")
+			}
+			newfile,err:=os.Create(newfilepath)
+			if err!=nil{
+				return err
+			}
+			//defer newfile.Close()
+			srcfile,err:=os.Open(path.Join(dirname.Name,fileinfo.Name()))
+			if err!=nil{
+				return err
+			}
+			//defer srcfile.Close()
+			err=newfile.Chmod(fileinfo.Mode())
+			if err!=nil{
+				return err
+			}
+			_,err=io.Copy(newfile,srcfile)
+			if err!=nil{
+				return err
+			}
+			srcfile.Close()
+			newfile.Close()
+
+		}
+	}
+	return err
 }

@@ -71,11 +71,22 @@ func main()  {
 			}else {
 				fmt.Println("解压目录：",args[2])
 			}
+		case "copydir":
+			if len(args)==2{
+				dir,_:=os.Getwd()
+				args=append(args,dir)
+			}
+			err:=filetools.CopyDir(args[1],args[2])
+			if err!=nil{
+				log.Fatal(err)
+			}else {
+				fmt.Println("复制目录"+args[1]+"到"+args[2])
+			}
 		default:
-			log.Fatal("使用方法：filetools [walk|zip|unzip|targz|untargz] [参数 参数 参数 ...]")
+			log.Fatal("使用方法：filetools [walk|zip|unzip|targz|untargz|copydir] [参数 参数 参数 ...]")
 		}
 
 	}else {
-		log.Fatal("使用方法：filetools <walk|zip|unzip|targz|untargz> <参数> [参数 参数 ...]")
+		log.Fatal("使用方法：filetools <walk|zip|unzip|targz|untargz|copydir> <参数> [参数 参数 ...]")
 	}
 }
