@@ -13,7 +13,8 @@ func getdirinfos(srcpath string) (files_edirs[]filetools.Dir,rootdir string,err 
 		return files_edirs,rootdir,err
 	}
 	if fileinfo.IsDir(){
-		rootdir,_=path.Split(path.Clean(srcpath))
+		//rootdir,_=path.Split(path.Clean(srcpath))
+		rootdir=path.Clean(srcpath)
 		tmpfiles_edirs,err:=filetools.WalkDirInfo(srcpath)
 		if err!=nil{
 			return files_edirs,rootdir,err
