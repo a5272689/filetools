@@ -1,64 +1,62 @@
 package archive
 ////
-//import (
-//	"os"
-//	"io"
-//	"archive/zip"
-//	"path/filepath"
-//	"path"
-//	"fmt"
-//)
-////
-////func Unzip(zippath,outpath string,cover bool ) error {
-////	r, err := zip.OpenReader(zippath)
-////	if err != nil {
-////		return err
-////	}
-////	defer r.Close()
-////	_, err = os.Stat(outpath)
-////	if err != nil {
-////		os.MkdirAll(outpath, os.ModePerm)
-////	}
-////	for _, f := range r.File {
-////		new_path := path.Join(outpath, f.Name)
-////		_,new_path_err:=os.Stat(new_path)
-////		if f.Mode().IsDir() {
-////			if new_path_err!=nil{
-////				err := os.Mkdir(new_path, f.Mode())
-////				if err != nil {
-////					return err
-////				}
-////			}
-////
-////		} else {
-////			if !cover{
-////				if new_path_err==nil{
-////					return errors.New("文件："+new_path+" 已经存在！！")
-////				}
-////			}
-////			wc, err := os.Create(new_path)
-////			if err != nil {
-////				return err
-////			}
-////			defer wc.Close()
-////			rc, err := f.Open()
-////			if err != nil {
-////				return err
-////			}
-////			defer rc.Close()
-////			err=wc.Chmod(f.Mode())
-////			if err != nil {
-////				return err
-////			}
-////			_, err = io.Copy(wc, rc)
-////			if err != nil {
-////				return err
-////			}
-////		}
-////
-////	}
-////	return nil
-////}
+import (
+	"os"
+	"io"
+	"archive/zip"
+	"path"
+	"errors"
+)
+func Unzip(zippath,outpath string,cover bool ) error {
+	r, err := zip.OpenReader(zippath)
+	if err != nil {
+		return err
+	}
+	defer r.Close()
+	_, err = os.Stat(outpath)
+	if err != nil {
+		os.MkdirAll(outpath, os.ModePerm)
+	}
+	for _, f := range r.File {
+		new_path := path.Join(outpath, f.Name)
+		_,new_path_err:=os.Stat(new_path)
+		if f.Mode().IsDir() {
+			if new_path_err!=nil{
+				err := os.Mkdir(new_path, f.Mode())
+				if err != nil {
+					return err
+				}
+			}
+
+		} else {
+			if !cover{
+				if new_path_err==nil{
+					return errors.New("文件："+new_path+" 已经存在！！")
+				}
+			}
+			wc, err := os.Create(new_path)
+			if err != nil {
+				return err
+			}
+			defer wc.Close()
+			rc, err := f.Open()
+			if err != nil {
+				return err
+			}
+			defer rc.Close()
+			err=wc.Chmod(f.Mode())
+			if err != nil {
+				return err
+			}
+			_, err = io.Copy(wc, rc)
+			if err != nil {
+				return err
+			}
+		}
+
+	}
+	return nil
+}
 ////
 //func Zip(srcpath,zippath string) error {
 //	files_edirs, rootdir, err := getdirinfos(srcpath)
