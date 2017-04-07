@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"io"
 	"errors"
+	"fmt"
 )
 
 type Dir struct {
@@ -86,26 +87,39 @@ func CopyDir(src,dst string) error {
 			if err==nil{
 				return errors.New("文件："+newfilepath+" 已经存在！！")
 			}
-			newfile,err:=os.Create(newfilepath)
-			if err!=nil{
-				return err
+			if !fileinfo.Mode().IsRegular(){
+				linkpath,err:=os.Readlink(fileinfo.Name())
+				if err!=nil{
+					return err
+				}
+				err=os.Symlink(linkpath,newfilepath)
+				if err!=nil{
+					return err
+				}
+
+			}else {
+				newfile,err:=os.Create(newfilepath)
+				if err!=nil{
+					return err
+				}
+				//defer newfile.Close()
+				srcfile,err:=os.Open(path.Join(dirname.Name,fileinfo.Name()))
+				if err!=nil{
+					return err
+				}
+				//defer srcfile.Close()
+				err=newfile.Chmod(fileinfo.Mode())
+				if err!=nil{
+					return err
+				}
+				_,err=io.Copy(newfile,srcfile)
+				if err!=nil{
+					return err
+				}
+				srcfile.Close()
+				newfile.Close()
 			}
-			//defer newfile.Close()
-			srcfile,err:=os.Open(path.Join(dirname.Name,fileinfo.Name()))
-			if err!=nil{
-				return err
-			}
-			//defer srcfile.Close()
-			err=newfile.Chmod(fileinfo.Mode())
-			if err!=nil{
-				return err
-			}
-			_,err=io.Copy(newfile,srcfile)
-			if err!=nil{
-				return err
-			}
-			srcfile.Close()
-			newfile.Close()
+
 
 		}
 	}
