@@ -7,30 +7,29 @@ import (
 	"path"
 )
 
-func getdirinfos(srcpath string) (files_edirs[]string,rootdir string,err error) {
+func getdirinfos(srcpath string) (files_edirs[]filetools.Dir,rootdir string,err error) {
 	fileinfo,err:= os.Stat(srcpath)
 	if err!=nil{
 		return files_edirs,rootdir,err
 	}
 	if fileinfo.IsDir(){
-		dirinfos,err:=filetools.WalkDirInfo(srcpath)
+		rootdir,_=path.Split(path.Clean(srcpath))
+		tmpfiles_edirs,err:=filetools.WalkDirInfo(srcpath)
 		if err!=nil{
 			return files_edirs,rootdir,err
 		}
-		rootdir=path.Clean(srcpath)
-		for _,dir:=range dirinfos{
-			if dir.Name!=rootdir{
-				files_edirs=append(files_edirs,dir.Name)
-			}
-			for _,fileinfo:=range dir.Files{
-				files_edirs=append(files_edirs,path.Join(dir.Name,fileinfo.Name()))
-			}
+		for _,files_edir:=range tmpfiles_edirs{
+			files_edirs=append(files_edirs,files_edir)
 		}
-
 	}else {
 		err=nil
-		files_edirs=append(files_edirs,srcpath)
 		rootdir,_=filepath.Split(srcpath)
+		newDir := filetools.Dir{
+			Name:"",
+			Files:[]os.FileInfo{fileinfo},
+		}
+		files_edirs=append(files_edirs,newDir)
+
 	}
 	return files_edirs,rootdir,err
 }
