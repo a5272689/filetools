@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"io"
 	"errors"
-	"fmt"
 )
 
 type Dir struct {
