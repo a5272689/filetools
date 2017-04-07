@@ -87,7 +87,7 @@ func CopyDir(src,dst string) error {
 				return errors.New("文件："+newfilepath+" 已经存在！！")
 			}
 			if !fileinfo.Mode().IsRegular(){
-				linkpath,err:=os.Readlink(fileinfo.Name())
+				linkpath,err:=os.Readlink(path.Join(dirname.Name,fileinfo.Name()))
 				if err!=nil{
 					return err
 				}
